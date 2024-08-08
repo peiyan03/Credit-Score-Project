@@ -100,6 +100,63 @@ AUC的取值范围是0到1，数值越大表示模型的性能越好。具体解
 2. 训练模型
 3. 使用交叉验证或独立测试集评估模型性能
 
+这里我选择了几个常见模型：
+
+建立逻辑回归模型 (Logistic Regression)
+model_LR = LogisticRegression(max_iter=10000, C=1.0, penalty='l2', solver='lbfgs')
+
+建立决策树模型 (Decision Tree)
+model_DT = DecisionTreeClassifier(random_state=42)
+
+建立随机森林模型 (Random Forest)
+model_RF = RandomForestClassifier(random_state=42)
+
+建立梯度提升机模型 (Gradient Boosting Machine, GBM)
+model_GBM = GradientBoostingClassifier(random_state=42)
+
+建立支持向量机模型 (Support Vector Machine, SVM)
+model_SVC = SVC(probability=True, random_state=42)
+
+- **通过训练和评估最后的准确率等结果，我们可以找到最适合的模型** 
+### 以下是模拟中获得的结果：
+
+### Model Performance Summary
+
+#### Best Model: Logistic Regression
+
+#### Performance Metrics
+
+| Metric           | Value             |
+|------------------|-------------------|
+| Accuracy         | 0.8075            |
+| AUC              | 0.8439583333333334|
+
+#### Confusion Matrix
+
+|        | Predicted Negative | Predicted Positive |
+|--------|--------------------|--------------------|
+| Actual Negative | 248                | 32                 |
+| Actual Positive | 45                 | 75                 |
+
+#### Classification Report
+
+| Class | Precision | Recall | F1-Score | Support |
+|-------|-----------|--------|----------|---------|
+| 0     | 0.85      | 0.89   | 0.87     | 280     |
+| 1     | 0.70      | 0.62   | 0.66     | 120     |
+
+#### Overall Metrics
+
+| Metric          | Value |
+|-----------------|-------|
+| Accuracy        | 0.81  |
+| Macro Avg Precision | 0.77 |
+| Macro Avg Recall | 0.76 |
+| Macro Avg F1-Score | 0.76 |
+| Weighted Avg Precision | 0.80 |
+| Weighted Avg Recall | 0.81 |
+| Weighted Avg F1-Score | 0.80 |
+***
 ## 3.2.模型优化
 ### 意义
 提高模型的预测准确性和稳定性。
@@ -108,16 +165,21 @@ AUC的取值范围是0到1，数值越大表示模型的性能越好。具体解
 2. 选择最优特征
 3. 使用正则化方法防止过拟合
 
-## 4.1.评分卡构建
+- 对于参数调整，我们可以在定义模型的时候修改
+- 我在代码里用了集成学习，交叉验证等方法去提升模型
+- 初次之外，我还尝试了模型堆叠（Stacking）
+  - 但是在这里并没有很大的提升模型结果，详情可以看代码参看
+  - 主要逻辑就是在第一次训练的模型之上运用结果再一次训练模型
+    - 例如用StackingClassifier或者直接再一次套用模型
+
+## 4.1.评分卡构建与信用评分计算
 ### 意义
 将模型结果转化为评分，便于实际应用和解释。
 ### 步骤
 1. 根据模型输出的概率或评分，将其映射到特定的评分区间
 2. 构建评分卡
 
-## （5.模型监控与维护）
-### 意义
-确保模型在实际应用中的有效性和稳定性，及时发现并调整模型。
-### 步骤
-1. 定期监控模型表现
-2. 更新模型以应对数据变化
+最后这里用我们的模型测试结果建立评分卡先，主要是用WOE值进行一些数学计算。
+然后后期就可以用这个评分卡来计算最终分数。
+
+
